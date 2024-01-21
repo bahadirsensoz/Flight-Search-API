@@ -9,9 +9,11 @@ import com.alibahadirsensoz.flightsearchapi.repository.SearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -82,9 +84,10 @@ public class FlightService {
     }
 
 
-    public List<Flight> searchByBetweenTimesAndDepartureLanding(LocalDateTime requestTime, LocalDateTime departureTime){
-        requestTime = LocalDateTime.now();
-        return searchRepository.findFlightsByDepartureTimeBetween(requestTime, departureTime);
+    public List<Flight> searchByBetweenTimesAndDepartureLanding(LocalDateTime departureTime, LocalDateTime returnTime){
+        //requestTime = LocalDateTime.now();
+        //List<Flight> list = searchRepository.findByDepartureTimeBetween(requestTime, departureTime);
+        return searchRepository.findFlightsByDepartureTimeBetween(departureTime, returnTime);
     }
     public List<Flight> searchFlights(String origin, String destination, String departureDate, String returnDate) {
         DateTimeFormatter isoFormat = DateTimeFormatter.ISO_DATE_TIME;
@@ -101,6 +104,36 @@ public class FlightService {
             return searchRepository.findFlightsByDepartureAirportAndLandingAirportAndDepartureTime(
                     origin, destination, LocalDateTime.parse(departureDate, isoFormat));
         }
+    }
+
+    public List<Flight> searchByAll(String origin, String destination, LocalDateTime departureDate, LocalDateTime returnDate){
+
+
+        List<Flight> flightList;
+        if(returnDate == null) {
+            LocalDateTime endOfDepartureTime = departureDate.with(LocalTime.MAX);
+            flightList = searchRepository.findFlightsByDepartureTimeBetween(departureDate, endOfDepartureTime);
+            flightList = flightList.stream().filter(flight ->
+                            flight.getDepartureAirport().equals(origin) &&
+                                    flight.getLandingAirport().equals(destination))
+                    .collect(Collectors.toList());
+        }
+        else{
+            LocalDateTime endOfDepartureTime = departureDate.with(LocalTime.MAX);
+            LocalDateTime endOfReturnTime = returnDate.with(LocalTime.MAX);
+            flightList = searchRepository.findFlightsByDepartureTimeBetween(departureDate, endOfDepartureTime);
+            flightList = flightList.stream().filter(flight ->
+                            flight.getDepartureAirport().equals(origin) &&
+                                    flight.getLandingAirport().equals(destination))
+                    .collect(Collectors.toList());
+            List<Flight> returnList = searchRepository.findFlightsByDepartureTimeBetween(returnDate, endOfReturnTime);
+            returnList = returnList.stream().filter(flight ->
+                            flight.getDepartureAirport().equals(destination) &&
+                                    flight.getLandingAirport().equals(origin))
+                    .toList();
+            flightList.addAll(returnList);
+        }
+        return flightList;
     }
 
     public List<Flight> searchByDestination(String destination) {

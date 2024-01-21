@@ -81,15 +81,31 @@ public class FlightController {
         return flightService.searchByBeforeDepartureTime(localDateTime);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/searchByBetweenTime")
     public List<Flight> searchByBetweenTimesAndDepartureLanding(
             @RequestParam(value = "departureDate", required = true) String departureDate,
             @RequestParam(value = "returnDate", required = false) String returnDate) {
-        LocalDateTime requestTime = LocalDateTime.now();
+        //LocalDateTime requestTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         LocalDateTime localDateTime2 = LocalDateTime.parse(departureDate, DateTimeFormatter.ISO_DATE_TIME);
-        LocalDateTime endOfDay = LocalDateTime.of(LocalDate.from(localDateTime2), LocalTime.MAX);
-        return flightService.searchByBetweenTimesAndDepartureLanding(requestTime, endOfDay);
+        //LocalDateTime endOfDay = LocalDateTime.of(LocalDate.from(localDateTime2), LocalTime.MAX);
+        LocalDateTime localDateDepartureTime = LocalDateTime.parse(departureDate, DateTimeFormatter.ISO_DATE_TIME);
+        LocalDateTime localDateReturnTime = LocalDateTime.parse(returnDate, DateTimeFormatter.ISO_DATE_TIME);
+
+        return flightService.searchByBetweenTimesAndDepartureLanding(localDateDepartureTime, localDateReturnTime);
+    }
+
+    @GetMapping("/searchAll")
+    public List<Flight> searchByAll(
+            @RequestParam(value = "origin", required = true) String origin,
+            @RequestParam(value = "destination", required = true) String destination,
+            @RequestParam(value = "departureDate", required = true) String departureDate,
+            @RequestParam(value = "returnDate", required = false) String returnDate)  {
+        LocalDateTime localDateDepartureTime = LocalDateTime.parse(departureDate, DateTimeFormatter.ISO_DATE_TIME);
+
+        LocalDateTime localDateReturnTime = LocalDateTime.parse(returnDate, DateTimeFormatter.ISO_DATE_TIME);
+        return flightService.searchByAll(origin, destination, localDateDepartureTime, localDateReturnTime);
+
     }
 
     @GetMapping("/searchByDestination")

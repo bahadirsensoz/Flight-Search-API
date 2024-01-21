@@ -20,9 +20,10 @@ public interface SearchRepository extends MongoRepository<Flight, String> {
 
     List<Flight> findFlightsByDepartureTimeBefore(LocalDateTime departureTime);
 
-//    @Query("{ 'departureTime': { '$gte': ?0, '$lte': ?1 }, 'departureAirport': ?2, 'landingAirport': ?3 }")
-    List<Flight> findFlightsByDepartureTimeBetween(
-            LocalDateTime requestTime, LocalDateTime departureTime);
+    @Query("{ 'departureTime': { '$gte': ?0, '$lte': ?1 } }")
+    List<Flight> findFlightsByDepartureTimeBetween(LocalDateTime startTime, LocalDateTime endTime);
+
+    List<Flight> findByDepartureTimeBetween(LocalDateTime requestTime, LocalDateTime departureTime);
 
     List<Flight> findFlightsByLandingAirport(String landingAirport);
 
