@@ -17,17 +17,17 @@ public class FlightSearchApiApplication {
 
 
 
-	@Autowired
-	AirportRepository airportRepository;
-
-	@PostConstruct
-	public void populateData() {
-
-		Airport airport1 = new Airport();
-		airport1.setCity("Istanbul");
-
-
-
-		airportRepository.save(airport1);
-	}
+//	@Autowired
+//	AirportRepository airportRepository;
+//
+//	@PostConstruct
+//	public void populateData() {
+//
+//		Airport airport1 = new Airport();
+//		airport1.setCity("Istanbul");
+//
+//
+//
+//		airportRepository.save(airport1);
+//	}
 }

@@ -3,7 +3,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Document
@@ -16,13 +18,15 @@ public class Flight {
     private String departureAirport;
     @NonNull
     private String landingAirport;
-
     @Positive
-    @NonNull
     private int price;
     @NonNull
+
     private LocalDateTime departureTime;
     @NonNull
     private LocalDateTime landingTime;
 
+    public Flight() {
+
+    }
 }
